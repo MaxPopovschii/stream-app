@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark text-white;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark px-6 py-2 rounded font-semibold transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-dark-lighter hover:bg-dark-light px-6 py-2 rounded font-semibold transition-colors;
+  }
+
+  .card {
+    @apply bg-dark-light rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-dark-lighter border border-dark-light rounded focus:outline-none focus:border-primary text-white;
+  }
+}
