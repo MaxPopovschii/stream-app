@@ -1,0 +1,195 @@
+services:
+  # Databases
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: streamapp
+      POSTGRES_PASSWORD: streamapp123
+      POSTGRES_DB: streamapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - streamapp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: streamapp
+      MONGO_INITDB_ROOT_PASSWORD: streamapp123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - streamapp-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - streamapp-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: streamapp
+      RABBITMQ_DEFAULT_PASS: streamapp123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - streamapp-network
+
+  # Microservices
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - USER_SERVICE_URL=http://user-service:3002
+      - VIDEO_SERVICE_URL=http://video-service:3003
+      - STREAMING_SERVICE_URL=http://streaming-service:3004
+      - RECOMMENDATION_SERVICE_URL=http://recommendation-service:3005
+    depends_on:
+      - auth-service
+      - user-service
+      - video-service
+      - streaming-service
+      - recommendation-service
+    networks:
+      - streamapp-network
+
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://streamapp:streamapp123@postgres:5432/streamapp
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_EXPIRES_IN=7d
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - streamapp-network
+    restart: on-failure
+
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - DATABASE_URL=postgresql://streamapp:streamapp123@postgres:5432/streamapp
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://streamapp:streamapp123@rabbitmq:5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - streamapp-network
+    restart: on-failure
+
+  video-service:
+    build: ./services/video-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - MONGODB_URL=mongodb://streamapp:streamapp123@mongodb:27017/streamapp?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://streamapp:streamapp123@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    volumes:
+      - video_storage:/app/storage
+    networks:
+      - streamapp-network
+
+  streaming-service:
+    build: ./services/streaming-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - MONGODB_URL=mongodb://streamapp:streamapp123@mongodb:27017/streamapp?authSource=admin
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - video_storage:/app/storage
+    networks:
+      - streamapp-network
+
+  recommendation-service:
+    build: ./services/recommendation-service
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+      - MONGODB_URL=mongodb://streamapp:streamapp123@mongodb:27017/streamapp?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://streamapp:streamapp123@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    networks:
+      - streamapp-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api-gateway
+    networks:
+      - streamapp-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  streamapp-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  rabbitmq_data:
+  video_storage:
