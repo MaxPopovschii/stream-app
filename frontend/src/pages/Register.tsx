@@ -29,20 +29,29 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 px-4">
-      <div className="max-w-md w-full bg-dark-light p-8 rounded-lg shadow-xl">
-        <h2 className="text-3xl font-bold mb-6 text-center">Create Account</h2>
+    <div className="min-h-screen flex items-center justify-center pt-16 px-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-secondary rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-96 h-96 bg-accent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+      </div>
+      
+      <div className="max-w-md w-full glass rounded-3xl p-10 shadow-elegant-lg relative z-10">
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold mb-2">Join us today</h2>
+          <p className="text-gray-400 font-light">Create your account and start streaming</p>
+        </div>
         
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
+          <div className="bg-red-500/10 backdrop-blur-sm border border-red-500/50 text-red-400 px-5 py-4 rounded-2xl mb-6 font-medium">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+              <label htmlFor="firstName" className="block text-sm font-medium mb-2 text-gray-300">
                 First Name
               </label>
               <input
@@ -50,11 +59,12 @@ export default function Register() {
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                placeholder="John"
                 className="input"
               />
             </div>
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+              <label htmlFor="lastName" className="block text-sm font-medium mb-2 text-gray-300">
                 Last Name
               </label>
               <input
@@ -62,55 +72,68 @@ export default function Register() {
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                placeholder="Doe"
                 className="input"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email
+            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
+              Email address
             </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
               className="input"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2">
-              Password (min. 8 characters)
+            <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-300">
+              Password
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 8 characters"
               className="input"
               minLength={8}
               required
             />
+            <p className="text-xs text-gray-500 mt-2">Must be at least 8 characters long</p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-3 disabled:opacity-50"
+            className="w-full btn-primary text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                Creating account...
+              </span>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-primary hover:underline">
-            Sign in
-          </Link>
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-gray-400 font-light">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary hover:text-primary-light font-semibold transition-colors">
+              Sign in instead
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

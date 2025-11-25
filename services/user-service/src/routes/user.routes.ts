@@ -16,4 +16,8 @@ router.delete('/watchlist/:videoId', userController.removeFromWatchlist);
 router.get('/history', userController.getWatchHistory);
 router.post('/history/:videoId', userController.addToWatchHistory);
 
+// Notifications routes (mock in-memory)
+router.get('/notifications', userController.getNotifications);
+router.put('/notifications/:id/read', userController.markNotificationRead);
+
 export default router;

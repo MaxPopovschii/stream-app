@@ -14,12 +14,12 @@ export default function Watchlist() {
   const fetchWatchlist = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/users/users/watchlist');
+      const response = await api.get('/users/watchlist');
       setWatchlist(response.data);
       
       // Fetch video details for each item
       const videoPromises = response.data.map((item: any) =>
-        api.get(`/api/videos/videos/${item.videoId}`).catch(() => null)
+        api.get(`/videos/${item.videoId}`).catch(() => null)
       );
       
       const videoResponses = await Promise.all(videoPromises);
@@ -37,7 +37,7 @@ export default function Watchlist() {
 
   const handleRemove = async (videoId: string) => {
     try {
-      await api.delete(`/api/users/users/watchlist/${videoId}`);
+      await api.delete(`/users/watchlist/${videoId}`);
       fetchWatchlist();
     } catch (error) {
       console.error('Failed to remove from watchlist:', error);
@@ -63,7 +63,10 @@ export default function Watchlist() {
                     title: video.title,
                     thumbnail: video.thumbnail,
                     duration: video.duration,
-                    rating: video.rating
+                    rating: video.rating,
+                    description: video.description,
+                    releaseYear: video.releaseYear,
+                    genres: video.genres
                   }}
                 />
                 <button

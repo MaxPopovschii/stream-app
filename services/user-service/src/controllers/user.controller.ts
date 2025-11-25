@@ -5,6 +5,48 @@ import { eq, and, desc } from 'drizzle-orm';
 import logger from '../utils/logger';
 import { AuthRequest } from '../middleware/auth.middleware';
 
+// In-memory notifications store (simple mock)
+interface NotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  type: 'new_video' | 'recommendation' | 'system';
+  read: boolean;
+  createdAt: string;
+}
+
+const notificationsStore: Record<string, NotificationItem[]> = {};
+
+function generateMockNotifications(): NotificationItem[] {
+  const now = Date.now();
+  return [
+    {
+      id: '1',
+      title: 'New Video Added',
+      message: 'Check out the latest sci-fi thriller!',
+      type: 'new_video',
+      read: false,
+      createdAt: new Date(now).toISOString()
+    },
+    {
+      id: '2',
+      title: 'Recommended for You',
+      message: 'Based on your watch history, you might enjoy...',
+      type: 'recommendation',
+      read: false,
+      createdAt: new Date(now - 3600000).toISOString()
+    },
+    {
+      id: '3',
+      title: 'System Update',
+      message: 'Your preferences were synced successfully.',
+      type: 'system',
+      read: true,
+      createdAt: new Date(now - 7200000).toISOString()
+    }
+  ];
+}
+
 export async function getProfile(req: AuthRequest, res: Response) {
   try {
     const userId = req.user?.userId;
@@ -22,10 +64,18 @@ export async function getProfile(req: AuthRequest, res: Response) {
         preferences: {}
       }).returning();
       
-      return res.json(newProfile);
+      // Return with avatarUrl field for frontend compatibility
+      return res.json({
+        ...newProfile,
+        avatarUrl: newProfile.avatar
+      });
     }
 
-    res.json(profile);
+    // Return with avatarUrl field for frontend compatibility
+    res.json({
+      ...profile,
+      avatarUrl: profile.avatar
+    });
   } catch (error) {
     logger.error('Get profile error:', error);
     res.status(500).json({ error: 'Failed to get profile' });
@@ -39,12 +89,12 @@ export async function updateProfile(req: AuthRequest, res: Response) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { displayName, avatar, bio, preferences } = req.body;
+    const { displayName, avatar, avatarUrl, bio, preferences } = req.body;
 
     const [updated] = await db.update(profiles)
       .set({
         displayName,
-        avatar,
+        avatar: avatarUrl || avatar, // Support both avatarUrl and avatar
         bio,
         preferences,
         updatedAt: new Date()
@@ -52,7 +102,13 @@ export async function updateProfile(req: AuthRequest, res: Response) {
       .where(eq(profiles.userId, userId))
       .returning();
 
-    res.json(updated);
+    // Return with avatarUrl field for frontend compatibility
+    const response = {
+      ...updated,
+      avatarUrl: updated.avatar
+    };
+
+    res.json(response);
   } catch (error) {
     logger.error('Update profile error:', error);
     res.status(500).json({ error: 'Failed to update profile' });
@@ -166,3 +222,45 @@ export async function addToWatchHistory(req: AuthRequest, res: Response) {
     res.status(500).json({ error: 'Failed to add to watch history' });
   }
 }
+
+// --- Notifications Endpoints ---
+export async function getNotifications(req: AuthRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    if (!notificationsStore[userId]) {
+      notificationsStore[userId] = generateMockNotifications();
+    }
+    // Update unread count could be derived on client
+    res.json(notificationsStore[userId]);
+  } catch (error) {
+    logger.error('Get notifications error:', error);
+    res.status(500).json({ error: 'Failed to get notifications' });
+  }
+}
+
+export async function markNotificationRead(req: AuthRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { id } = req.params;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    if (!notificationsStore[userId]) {
+      notificationsStore[userId] = generateMockNotifications();
+    }
+    const list = notificationsStore[userId];
+    const idx = list.findIndex(n => n.id === id);
+    if (idx === -1) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    list[idx].read = true;
+    res.json({ success: true });
+  } catch (error) {
+    logger.error('Mark notification read error:', error);
+    res.status(500).json({ error: 'Failed to mark notification as read' });
+  }
+}
+

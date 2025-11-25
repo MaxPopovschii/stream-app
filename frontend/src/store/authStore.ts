@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isAuthenticated: false,
 
   login: async (email: string, password: string) => {
-    const response = await api.post('/api/auth/auth/login', { email, password });
+    const response = await api.post('/auth/login', { email, password });
     const { user, token } = response.data;
     
     localStorage.setItem('token', token);
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   register: async (email: string, password: string, firstName?: string, lastName?: string) => {
-    const response = await api.post('/api/auth/auth/register', {
+    const response = await api.post('/auth/register', {
       email,
       password,
       firstName,

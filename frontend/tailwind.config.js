@@ -8,19 +8,48 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#E50914',
-          dark: '#B20710',
-          light: '#F40612'
+          DEFAULT: '#6366F1', // Indigo moderno
+          dark: '#4F46E5',
+          light: '#818CF8',
+          50: '#EEF2FF',
+          100: '#E0E7FF',
+        },
+        secondary: {
+          DEFAULT: '#8B5CF6', // Viola elegante
+          dark: '#7C3AED',
+          light: '#A78BFA',
+        },
+        accent: {
+          DEFAULT: '#06B6D4', // Cyan vivace
+          dark: '#0891B2',
+          light: '#22D3EE',
         },
         dark: {
-          DEFAULT: '#141414',
-          light: '#1F1F1F',
-          lighter: '#2F2F2F'
+          DEFAULT: '#0F0F0F', // Nero più profondo
+          light: '#1A1A1A',
+          lighter: '#262626',
+          card: '#171717',
+        },
+        surface: {
+          DEFAULT: '#FAFAFA',
+          dark: '#F5F5F5',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif']
-      }
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+        display: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      },
+      borderRadius: {
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        '4xl': '2rem',
+      },
+      boxShadow: {
+        'elegant': '0 4px 20px rgba(0, 0, 0, 0.08)',
+        'elegant-lg': '0 10px 40px rgba(0, 0, 0, 0.12)',
+        'glow': '0 0 20px rgba(99, 102, 241, 0.3)',
+        'glow-purple': '0 0 20px rgba(139, 92, 246, 0.3)',
+      },
     },
   },
   plugins: [],

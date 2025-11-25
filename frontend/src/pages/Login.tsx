@@ -27,33 +27,43 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 px-4">
-      <div className="max-w-md w-full bg-dark-light p-8 rounded-lg shadow-xl">
-        <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
+    <div className="min-h-screen flex items-center justify-center pt-16 px-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
+      
+      <div className="max-w-md w-full glass rounded-3xl p-10 shadow-elegant-lg relative z-10">
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold mb-2">Welcome back</h2>
+          <p className="text-gray-400 font-light">Sign in to continue your journey</p>
+        </div>
         
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
+          <div className="bg-red-500/10 backdrop-blur-sm border border-red-500/50 text-red-400 px-5 py-4 rounded-2xl mb-6 font-medium">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email
+            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
+              Email address
             </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
               className="input"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2">
+            <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-300">
               Password
             </label>
             <input
@@ -61,6 +71,7 @@ export default function Login() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               className="input"
               required
             />
@@ -69,18 +80,27 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-3 disabled:opacity-50"
+            className="w-full btn-primary text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                Signing in...
+              </span>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-primary hover:underline">
-            Sign up now
-          </Link>
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-gray-400 font-light">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-primary hover:text-primary-light font-semibold transition-colors">
+              Create one now
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

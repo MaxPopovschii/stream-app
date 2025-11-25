@@ -82,7 +82,7 @@ export async function getVideosByGenre(req: Request, res: Response) {
       return res.json(JSON.parse(cached));
     }
 
-    const videos = await Video.find({ genres: genre })
+    const videos = await Video.find({ genre: genre })
       .sort({ views: -1 })
       .skip(skip)
       .limit(Number(limit))

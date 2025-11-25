@@ -11,10 +11,6 @@ import { redisClient } from '../utils/redis';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-const signOptions: SignOptions = {
-  expiresIn: Number(JWT_EXPIRES_IN) 
-};
-
 export async function register(req: Request, res: Response) {
   try {
     const errors = validationResult(req);
@@ -52,7 +48,7 @@ export async function register(req: Request, res: Response) {
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email },
       JWT_SECRET,
-      signOptions
+      { expiresIn: JWT_EXPIRES_IN } as any
     );
 
     res.status(201).json({
@@ -96,7 +92,7 @@ export async function login(req: Request, res: Response) {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       JWT_SECRET,
-      signOptions
+      { expiresIn: JWT_EXPIRES_IN } as any
     );
 
     // Store token in Redis (for refresh token functionality)
@@ -160,7 +156,7 @@ export async function refreshToken(req: Request, res: Response) {
     const newToken = jwt.sign(
       { userId: decoded.userId, email: decoded.email },
       JWT_SECRET,
-      signOptions
+      { expiresIn: JWT_EXPIRES_IN } as any
     );
 
     // Update token in Redis

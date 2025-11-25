@@ -104,6 +104,7 @@ services:
       - DATABASE_URL=postgresql://streamapp:streamapp123@postgres:5432/streamapp
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://streamapp:streamapp123@rabbitmq:5672
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
     depends_on:
       postgres:
         condition: service_healthy
