@@ -3,9 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-primary: #6366F1;
+    --color-secondary: #8B5CF6;
+    --color-accent: #06B6D4;
+    --color-background: #0F0F0F;
+  }
+
   body {
-    @apply bg-dark text-white antialiased;
+    @apply antialiased;
     font-feature-settings: 'kern', 'liga', 'clig', 'calt';
+    background-color: var(--color-background);
+    color: white;
+  }
+  
+  body.light {
+    color: #1F2937;
   }
   
   * {

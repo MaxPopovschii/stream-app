@@ -50,6 +50,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     const colors = themes[theme];
     
     // Apply theme colors
@@ -58,13 +59,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.style.setProperty('--color-accent', colors.accent);
     root.style.setProperty('--color-background', colors.background);
     
+    // Apply background color directly
+    body.style.backgroundColor = colors.background;
+    
     // Apply light/dark mode
     if (theme === 'light') {
-      root.classList.remove('dark');
-      root.classList.add('light');
+      body.classList.remove('dark');
+      body.classList.add('light');
+      body.style.color = '#1F2937'; // Dark text for light theme
     } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
+      body.classList.remove('light');
+      body.classList.add('dark');
+      body.style.color = '#FFFFFF'; // White text for dark themes
     }
     
     localStorage.setItem('theme', theme);

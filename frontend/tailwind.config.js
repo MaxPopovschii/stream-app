@@ -8,24 +8,24 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6366F1', // Indigo moderno
+          DEFAULT: 'var(--color-primary, #6366F1)',
           dark: '#4F46E5',
           light: '#818CF8',
           50: '#EEF2FF',
           100: '#E0E7FF',
         },
         secondary: {
-          DEFAULT: '#8B5CF6', // Viola elegante
+          DEFAULT: 'var(--color-secondary, #8B5CF6)',
           dark: '#7C3AED',
           light: '#A78BFA',
         },
         accent: {
-          DEFAULT: '#06B6D4', // Cyan vivace
+          DEFAULT: 'var(--color-accent, #06B6D4)',
           dark: '#0891B2',
           light: '#22D3EE',
         },
         dark: {
-          DEFAULT: '#0F0F0F', // Nero più profondo
+          DEFAULT: 'var(--color-background, #0F0F0F)',
           light: '#1A1A1A',
           lighter: '#262626',
           card: '#171717',
