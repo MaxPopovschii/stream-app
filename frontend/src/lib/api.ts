@@ -1,13 +1,5 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_API_URL?: string;
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
-
 import axios from 'axios';
 
 // Use relative path - Vite proxy will forward to api-gateway

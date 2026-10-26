@@ -3,7 +3,6 @@ import api from '../lib/api';
 import VideoCard from '../components/VideoCard';
 
 export default function Watchlist() {
-  const [watchlist, setWatchlist] = useState<any[]>([]);
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +14,6 @@ export default function Watchlist() {
     try {
       setLoading(true);
       const response = await api.get('/users/watchlist');
-      setWatchlist(response.data);
       
       // Fetch video details for each item
       const videoPromises = response.data.map((item: any) =>

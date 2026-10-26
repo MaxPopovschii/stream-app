@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/api';
 import { FiCamera, FiEdit2, FiCheck, FiX, FiTrendingUp, FiClock, FiHeart } from 'react-icons/fi';
@@ -27,7 +27,6 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState('');
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [customAvatarUrl, setCustomAvatarUrl] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -71,12 +70,6 @@ export default function Profile() {
       setCustomAvatarUrl('');
       setShowAvatarPicker(false);
     }
-  };
-
-  const getInitials = () => {
-    if (displayName) return displayName.charAt(0).toUpperCase();
-    if (user?.email) return user.email.charAt(0).toUpperCase();
-    return 'U';
   };
 
   return (
