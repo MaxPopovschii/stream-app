@@ -12,7 +12,7 @@ interface Video {
   duration: number;
   genre: string;
   year: number;
-  rating?: string;
+  rating?: number;
   cast: string[];
   director: string;
   views: number;
